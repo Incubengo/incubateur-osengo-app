@@ -126,6 +126,12 @@ def create_app():
         project_stage = db.Column(db.String(100), nullable=True)
         sector = db.Column(db.String(100), nullable=True)
         needs = db.Column(db.Text, nullable=True)
+
+        # Additional description field for the project.  This allows users to
+        # describe their project in more detail when booking a meeting.  It is
+        # optional (nullable) to maintain backward‑compatibility with existing
+        # records.
+        description = db.Column(db.Text, nullable=True)
         status = db.Column(db.String(20), default='pending')  # pending/accepted/refused/cancelled
         cancel_token = db.Column(db.String(64), unique=True, nullable=False)
         created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -254,6 +260,7 @@ def create_app():
             postal_code = request.form.get('postal_code', '').strip()
             project_stage = request.form.get('project_stage', '').strip()
             sector = request.form.get('sector', '').strip()
+            description = request.form.get('description', '').strip()
             needs = request.form.get('needs', '').strip()
             if not all([name, surname, email, phone]):
                 flash('Merci de renseigner au moins les champs nom, prénom, email et téléphone.', 'danger')
@@ -270,6 +277,7 @@ def create_app():
                 postal_code=postal_code,
                 project_stage=project_stage,
                 sector=sector,
+                description=description,
                 needs=needs,
                 cancel_token=cancel_token,
                 status='pending'
@@ -399,15 +407,30 @@ def create_app():
             start_time = request.form.get('start_time')
             end_time = request.form.get('end_time')
             if date_str and start_time and end_time:
+                # Parse the provided start and end times into datetime objects.  These
+                # represent a continuous range of availability provided by the
+                # conseiller.  We will subdivide this range into one‑hour slots.
                 start_dt = datetime.strptime(f"{date_str} {start_time}", "%Y-%m-%d %H:%M")
                 end_dt = datetime.strptime(f"{date_str} {end_time}", "%Y-%m-%d %H:%M")
                 if end_dt <= start_dt:
                     flash('L’heure de fin doit être après l’heure de début.', 'danger')
                 else:
-                    slot = TimeSlot(agency_id=agency_id, start=start_dt, end=end_dt)
-                    db.session.add(slot)
+                    # Generate 1‑hour increments between start_dt and end_dt.  The
+                    # last slot will end exactly at end_dt; any remainder less than
+                    # an hour is ignored.  Each slot is saved to the database.
+                    current = start_dt
+                    created_count = 0
+                    while current + timedelta(hours=1) <= end_dt:
+                        next_end = current + timedelta(hours=1)
+                        slot = TimeSlot(agency_id=agency_id, start=current, end=next_end)
+                        db.session.add(slot)
+                        created_count += 1
+                        current = next_end
                     db.session.commit()
-                    flash('Créneau ajouté.', 'success')
+                    if created_count == 1:
+                        flash('Créneau ajouté.', 'success')
+                    else:
+                        flash(f'{created_count} créneaux ajoutés.', 'success')
         # Query all slots for listing (including booked) to allow deletion
         slots = TimeSlot.query.options(joinedload(TimeSlot.agency)).order_by(TimeSlot.start.desc()).all()
         return render_template('manage_slots.html', agencies=agencies, slots=slots)
@@ -454,7 +477,8 @@ def create_app():
         writer = csv.writer(output)
         writer.writerow([
             'ID', 'Agence', 'Début', 'Fin', 'Nom', 'Prénom', 'Email', 'Téléphone',
-            'Ville', 'Code postal', 'Stade du projet', 'Secteur', 'Besoins', 'Statut', 'Date de création'
+            'Ville', 'Code postal', 'Stade du projet', 'Secteur', 'Description', 'Besoins',
+            'Statut', 'Date de création'
         ])
         for b in bookings:
             writer.writerow([
@@ -470,6 +494,7 @@ def create_app():
                 b.postal_code,
                 b.project_stage,
                 b.sector,
+                b.description,
                 b.needs,
                 b.status,
                 b.created_at.strftime('%Y-%m-%d %H:%M'),
