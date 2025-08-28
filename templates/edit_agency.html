@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Modifier l’agence{% endblock %}
+{% block content %}
+<h2>Modifier l’agence</h2>
+<form method="post" class="mb-4">
+  <div class="row">
+    <div class="col-md-4 mb-2">
+      <input type="text" name="name" class="form-control" placeholder="Nom de l’agence" value="{{ agency.name }}" required>
+    </div>
+    <div class="col-md-4 mb-2">
+      <input type="text" name="city" class="form-control" placeholder="Ville" value="{{ agency.city }}">
+    </div>
+    <div class="col-md-4 mb-2">
+      <input type="text" name="description" class="form-control" placeholder="Description" value="{{ agency.description }}">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Enregistrer</button>
+  <a href="{{ url_for('manage_agencies') }}" class="btn btn-secondary">Annuler</a>
+</form>
+{% endblock %}
