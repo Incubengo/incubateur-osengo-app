@@ -438,11 +438,27 @@ def create_app():
             start_time = request.form.get('start_time')
             end_time = request.form.get('end_time')
             if date_str and start_time and end_time:
-                # Parse the provided start and end times into datetime objects.  These
-                # represent a continuous range of availability provided by the
-                # conseiller.  We will subdivide this range into one‑hour slots.
-                start_dt = datetime.strptime(f"{date_str} {start_time}", "%Y-%m-%d %H:%M")
-                end_dt = datetime.strptime(f"{date_str} {end_time}", "%Y-%m-%d %H:%M")
+                # Parse the provided start and end times into datetime objects.
+                # When the form uses native HTML5 <input type="time"> elements,
+                # the time values are returned in 24‑hour format (HH:MM).  However,
+                # some browsers/plugins (e.g. bootstrap time pickers) may return
+                # 12‑hour format with AM/PM (e.g. "09:00 AM").  To be robust, we
+                # detect the presence of AM/PM and choose the appropriate format.
+                def parse_time(t: str) -> datetime:
+                    """Return a datetime for the given date_str and time string.
+
+                    If the time string contains AM or PM, parse using 12‑hour format
+                    with meridiem; otherwise, parse using 24‑hour format.
+                    """
+                    time_str = t.strip()
+                    if any(m in time_str.upper() for m in ("AM", "PM")):
+                        fmt = "%Y-%m-%d %I:%M %p"
+                    else:
+                        fmt = "%Y-%m-%d %H:%M"
+                    return datetime.strptime(f"{date_str} {time_str}", fmt)
+
+                start_dt = parse_time(start_time)
+                end_dt = parse_time(end_time)
                 if end_dt <= start_dt:
                     flash('L’heure de fin doit être après l’heure de début.', 'danger')
                 else:
