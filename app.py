@@ -43,7 +43,8 @@ database by running ``flask db init`` and ``flask db upgrade``.  See
 import os
 import uuid
 import secrets
-from datetime import datetime, date, time
+# Import timedelta in addition to datetime, date and time for slot generation
+from datetime import datetime, date, time, timedelta
 
 from flask import (
     Flask,
