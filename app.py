@@ -437,19 +437,15 @@ def create_app():
             date_str = request.form.get('date')
             start_time = request.form.get('start_time')
             end_time = request.form.get('end_time')
-            if date_str and start_time and end_time:
-                # Parse the provided start and end times into datetime objects.
-                # When the form uses native HTML5 <input type="time"> elements,
-                # the time values are returned in 24‑hour format (HH:MM).  However,
-                # some browsers/plugins (e.g. bootstrap time pickers) may return
-                # 12‑hour format with AM/PM (e.g. "09:00 AM").  To be robust, we
-                # detect the presence of AM/PM and choose the appropriate format.
+            if date_str and start_time:
+                """
+                Create time slots for a given date.  If an end_time is supplied,
+                generate successive 1‑hour slots from start_time up to end_time.
+                Otherwise, create a single 1‑hour slot starting at start_time.
+                """
+                # Helper to parse the time string into a datetime.  Support both
+                # 24‑hour (HH:MM) and 12‑hour (HH:MM AM/PM) formats.
                 def parse_time(t: str) -> datetime:
-                    """Return a datetime for the given date_str and time string.
-
-                    If the time string contains AM or PM, parse using 12‑hour format
-                    with meridiem; otherwise, parse using 24‑hour format.
-                    """
                     time_str = t.strip()
                     if any(m in time_str.upper() for m in ("AM", "PM")):
                         fmt = "%Y-%m-%d %I:%M %p"
@@ -458,13 +454,18 @@ def create_app():
                     return datetime.strptime(f"{date_str} {time_str}", fmt)
 
                 start_dt = parse_time(start_time)
-                end_dt = parse_time(end_time)
-                if end_dt <= start_dt:
-                    flash('L’heure de fin doit être après l’heure de début.', 'danger')
+                # Determine the end of the range.  If the form includes an
+                # end_time value, use it; otherwise default to a one‑hour slot.
+                if end_time:
+                    end_dt = parse_time(end_time)
+                    if end_dt <= start_dt:
+                        flash("L’heure de fin doit être après l’heure de début.", 'danger')
+                        end_dt = None  # Prevent slot creation if invalid
                 else:
-                    # Generate 1‑hour increments between start_dt and end_dt.  The
-                    # last slot will end exactly at end_dt; any remainder less than
-                    # an hour is ignored.  Each slot is saved to the database.
+                    end_dt = start_dt + timedelta(hours=1)
+
+                if end_dt:
+                    # Generate one or more 1‑hour slots between start_dt and end_dt
                     current = start_dt
                     created_count = 0
                     while current + timedelta(hours=1) <= end_dt:
