@@ -369,10 +369,16 @@ def create_app():
     # Agencies management
     @app.route('/admin/agencies', methods=['GET', 'POST'])
     def manage_agencies():
+        """List all agencies and allow creation of new ones.
+
+        The listing displays each agency's name, city and description. A form at
+        the top of the page lets administrators add a new agency. This view
+        delegates editing and deletion to dedicated routes.
+        """
         if require_login():
             return require_login()
         if request.method == 'POST':
-            # Create new agency
+            # Create a new agency from the submitted form
             name = request.form.get('name', '').strip()
             city = request.form.get('city', '').strip()
             description = request.form.get('description', '').strip()
@@ -383,6 +389,30 @@ def create_app():
                 flash('Agence créée.', 'success')
         agencies = Agency.query.order_by(Agency.name).all()
         return render_template('manage_agencies.html', agencies=agencies)
+
+    @app.route('/admin/agencies/<int:agency_id>/edit', methods=['GET', 'POST'])
+    def edit_agency(agency_id):
+        """Edit an existing agency.
+
+        Displays a form pre‑populated with the agency's current values. On
+        submission, the agency is updated and the user is redirected back to
+        the agencies list.
+        """
+        if require_login():
+            return require_login()
+        agency = Agency.query.get_or_404(agency_id)
+        if request.method == 'POST':
+            name = request.form.get('name', '').strip()
+            city = request.form.get('city', '').strip()
+            description = request.form.get('description', '').strip()
+            if name:
+                agency.name = name
+                agency.city = city
+                agency.description = description
+                db.session.commit()
+                flash('Agence modifiée.', 'success')
+                return redirect(url_for('manage_agencies'))
+        return render_template('edit_agency.html', agency=agency)
 
     @app.route('/admin/agencies/<int:agency_id>/delete', methods=['POST'])
     def delete_agency(agency_id):
