@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Gestion des rendez‑vous{% endblock %}
+{% block content %}
+<h2>Rendez‑vous</h2>
+{% if bookings %}
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Date/Heure</th>
+        <th>Agence</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Email</th>
+        <th>Téléphone</th>
+        <th>Ville</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for b in bookings %}
+      <tr>
+        <td>{{ b.id }}</td>
+        <td>{{ b.slot.start.strftime('%d/%m/%Y à %H:%M') }}</td>
+        <td>{{ b.slot.agency.name }}</td>
+        <td>{{ b.surname }}</td>
+        <td>{{ b.name }}</td>
+        <td>{{ b.email }}</td>
+        <td>{{ b.phone }}</td>
+        <td>{{ b.city }}</td>
+        <td>
+          {% if b.status == 'pending' %}<span class="badge bg-warning">En attente</span>{% elif b.status == 'accepted' %}<span class="badge bg-success">Accepté</span>{% elif b.status == 'refused' %}<span class="badge bg-danger">Refusé</span>{% elif b.status == 'cancelled' %}<span class="badge bg-secondary">Annulé</span>{% endif %}
+        </td>
+        <td>
+          {% if b.status == 'pending' %}
+          <form method="post" class="d-flex">
+            <input type="hidden" name="booking_id" value="{{ b.id }}">
+            <button type="submit" name="action" value="accept" class="btn btn-sm btn-success me-1">Accepter</button>
+            <button type="submit" name="action" value="refuse" class="btn btn-sm btn-danger">Refuser</button>
+          </form>
+          {% else %}
+            –
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>Aucun rendez‑vous enregistré.</p>
+{% endif %}
+<p><a href="{{ url_for('dashboard') }}">Retour au tableau de bord</a></p>
+{% endblock %}

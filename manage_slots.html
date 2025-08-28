@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Gestion des créneaux{% endblock %}
+{% block content %}
+<h2>Créneaux</h2>
+<p>Ajouter un nouveau créneau :</p>
+<form method="post" class="mb-4">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-3">
+      <label for="agency_id" class="form-label">Agence</label>
+      <select id="agency_id" name="agency_id" class="form-select" required>
+        {% for agency in agencies %}
+          <option value="{{ agency.id }}">{{ agency.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="date" class="form-label">Date</label>
+      <input type="date" id="date" name="date" class="form-control" required>
+    </div>
+    <div class="col-md-2">
+      <label for="start_time" class="form-label">Début</label>
+      <input type="time" id="start_time" name="start_time" class="form-control" required>
+    </div>
+    <div class="col-md-2">
+      <label for="end_time" class="form-label">Fin</label>
+      <input type="time" id="end_time" name="end_time" class="form-control" required>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary">Ajouter</button>
+    </div>
+  </div>
+</form>
+
+{% if slots %}
+  <table class="table table-striped">
+    <thead><tr><th>Agence</th><th>Date</th><th>Heure début</th><th>Heure fin</th><th>Réservé ?</th><th>Action</th></tr></thead>
+    <tbody>
+    {% for slot in slots %}
+      <tr>
+        <td>{{ slot.agency.name }}</td>
+        <td>{{ slot.start.strftime('%d/%m/%Y') }}</td>
+        <td>{{ slot.start.strftime('%H:%M') }}</td>
+        <td>{{ slot.end.strftime('%H:%M') }}</td>
+        <td>{% if slot.is_booked %}<span class="badge bg-success">Oui</span>{% else %}<span class="badge bg-secondary">Non</span>{% endif %}</td>
+        <td>
+          <form method="post" action="{{ url_for('delete_slot', slot_id=slot.id) }}" onsubmit="return confirm('Supprimer ce créneau ?')">
+            <button class="btn btn-sm btn-danger" type="submit">Supprimer</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>Aucun créneau enregistré.</p>
+{% endif %}
+<p><a href="{{ url_for('dashboard') }}">Retour au tableau de bord</a></p>
+{% endblock %}

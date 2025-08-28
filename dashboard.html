@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Tableau de bord Back‑office{% endblock %}
+{% block content %}
+<h2>Tableau de bord</h2>
+<div class="row">
+  <div class="col-md-3">
+    <div class="card text-white bg-warning mb-3">
+      <div class="card-header">En attente</div>
+      <div class="card-body"><h3 class="card-title">{{ counts['pending'] }}</h3></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-success mb-3">
+      <div class="card-header">Acceptés</div>
+      <div class="card-body"><h3 class="card-title">{{ counts['accepted'] }}</h3></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-danger mb-3">
+      <div class="card-header">Refusés</div>
+      <div class="card-body"><h3 class="card-title">{{ counts['refused'] }}</h3></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-secondary mb-3">
+      <div class="card-header">Annulés</div>
+      <div class="card-body"><h3 class="card-title">{{ counts['cancelled'] }}</h3></div>
+    </div>
+  </div>
+</div>
+<h3>Gestion</h3>
+<ul>
+  <li><a href="{{ url_for('manage_agencies') }}">Agences</a></li>
+  <li><a href="{{ url_for('manage_slots') }}">Créneaux</a></li>
+  <li><a href="{{ url_for('manage_bookings') }}">Rendez‑vous</a></li>
+  <li><a href="{{ url_for('manage_pages') }}">Pages de contenu</a></li>
+  <li><a href="{{ url_for('export_bookings') }}">Exporter les données (CSV)</a></li>
+</ul>
+{% endblock %}

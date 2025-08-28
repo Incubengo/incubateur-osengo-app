@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Gestion des pages{% endblock %}
+{% block content %}
+<h2>Pages de contenu</h2>
+
+{% if page_to_edit %}
+  <h3>Modifier la page « {{ page_to_edit.title }} »</h3>
+{% else %}
+  <h3>Créer une nouvelle page</h3>
+{% endif %}
+
+<form method="post" class="mb-4">
+  <input type="hidden" name="page_id" value="{{ page_to_edit.id if page_to_edit else '' }}">
+  <div class="row mb-2">
+    <div class="col-md-4">
+      <label for="slug" class="form-label">Slug (URL)</label>
+      <input type="text" id="slug" name="slug" class="form-control" placeholder="ex : a-propos" value="{{ page_to_edit.slug if page_to_edit else '' }}" required>
+    </div>
+    <div class="col-md-4">
+      <label for="title" class="form-label">Titre</label>
+      <input type="text" id="title" name="title" class="form-control" value="{{ page_to_edit.title if page_to_edit else '' }}" required>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label for="content" class="form-label">Contenu (markdown ou texte riche)</label>
+    <textarea id="content" name="content" class="form-control" rows="5" required>{{ page_to_edit.content if page_to_edit else '' }}</textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">{% if page_to_edit %}Mettre à jour{% else %}Créer{% endif %}</button>
+  <a href="{{ url_for('manage_pages') }}" class="btn btn-secondary">Annuler</a>
+</form>
+
+{% if pages %}
+  <h3>Pages existantes</h3>
+  <table class="table table-striped">
+    <thead><tr><th>Titre</th><th>Slug</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for p in pages %}
+      <tr>
+        <td>{{ p.title }}</td>
+        <td>{{ p.slug }}</td>
+        <td>
+          <a href="{{ url_for('manage_pages', edit=p.id) }}" class="btn btn-sm btn-warning">Modifier</a>
+          <form method="post" action="{{ url_for('delete_page', page_id=p.id) }}" class="d-inline" onsubmit="return confirm('Supprimer cette page ?')">
+            <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+          </form>
+          <a href="{{ url_for('show_page', slug=p.slug) }}" class="btn btn-sm btn-secondary" target="_blank">Voir</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>Aucune page créée.</p>
+{% endif %}
+<p><a href="{{ url_for('dashboard') }}">Retour au tableau de bord</a></p>
+{% endblock %}

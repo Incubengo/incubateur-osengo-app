@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Confirmation de rendez‑vous{% endblock %}
+{% block content %}
+<div class="text-center py-4">
+  <h2>Rendez‑vous confirmé !</h2>
+  <p>Merci {{ booking.name }} {{ booking.surname }}. Votre rendez‑vous a bien été enregistré.</p>
+  <p>Vous recevrez un email de confirmation contenant les détails du rendez‑vous et un lien pour annuler ou reprogrammer si besoin.</p>
+  <p><strong>Date :</strong> {{ booking.slot.start.strftime('%d/%m/%Y') }}<br>
+     <strong>Heure :</strong> {{ booking.slot.start.strftime('%H:%M') }} – {{ booking.slot.end.strftime('%H:%M') }}<br>
+     <strong>Agence :</strong> {{ booking.slot.agency.name }} – {{ booking.slot.agency.city }}</p>
+  <p><a href="{{ url_for('index') }}" class="btn btn-primary">Retour à l’accueil</a></p>
+</div>
+{% endblock %}

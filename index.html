@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Accueil - Incubateur Osengo{% endblock %}
+{% block content %}
+<div class="py-4 text-center">
+  <h1>Prendre rendez‑vous avec un conseiller</h1>
+  <p class="lead">Choisissez l’agence la plus proche pour consulter les créneaux disponibles.</p>
+</div>
+
+<div class="row">
+  {% for agency in agencies %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ agency.name }}</h5>
+          {% if agency.city %}<h6 class="card-subtitle mb-2 text-muted">{{ agency.city }}</h6>{% endif %}
+          <p class="card-text">{{ agency.description or 'Aucune description disponible.' }}</p>
+          <a href="{{ url_for('select_agency', agency_id=agency.id) }}" class="btn btn-primary">Voir les créneaux</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
