@@ -1,0 +1,44 @@
+/*
+  Custom stylesheet to approximate Osengo’s brand colours.
+  This file overrides some of the Bootstrap default variables and components to
+  align closer to Osengo’s visual identity (blue tones and simple typography).
+*/
+
+/* Base font family similar to the Osengo website */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Primary colour (blue) inspired by Osengo’s branding */
+.bg-primary {
+  background-color: #005EB8 !important;
+}
+
+.navbar-dark .navbar-brand, .navbar-dark .navbar-nav .nav-link {
+  color: #ffffff;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #005EB8;
+  border-color: #005EB8;
+}
+
+.btn-primary:hover {
+  background-color: #004a94;
+  border-color: #004a94;
+}
+
+/* Alerts */
+.alert-success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+.alert-danger {
+  background-color: #f8d7da;
+  color: #842029;
+}
+.alert-warning {
+  background-color: #fff3cd;
+  color: #664d03;
+}
