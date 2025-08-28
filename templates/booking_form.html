@@ -44,6 +44,10 @@
     <input type="text" class="form-control" id="sector" name="sector">
   </div>
   <div class="mb-3">
+    <label for="description" class="form-label">Description du projet</label>
+    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+  </div>
+  <div class="mb-3">
     <label for="needs" class="form-label">Besoins / Questions</label>
     <textarea class="form-control" id="needs" name="needs" rows="3"></textarea>
   </div>
@@ -51,6 +55,7 @@
     <input type="checkbox" class="form-check-input" id="consent" required>
     <label class="form-check-label" for="consent">J’accepte que mes données soient utilisées pour la prise de rendez‑vous (voir mentions légales).</label>
   </div>
+  <p class="text-warning small">Les projets relevant du domaine de l’agriculture et de la MSA ne sont pas éligibles au dispositif.</p>
   <button type="submit" class="btn btn-success">Envoyer</button>
   <a href="{{ url_for('select_agency', agency_id=slot.agency_id) }}" class="btn btn-secondary">Annuler</a>
 </form>
