@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Réservation – {{ slot.agency.name }}{% endblock %}
+{% block content %}
+<h2>Réservation du créneau</h2>
+<p><strong>Agence :</strong> {{ slot.agency.name }} – {{ slot.agency.city }}</p>
+<p><strong>Date :</strong> {{ slot.start.strftime('%d/%m/%Y') }} de {{ slot.start.strftime('%H:%M') }} à {{ slot.end.strftime('%H:%M') }}</p>
+<form method="post">
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label for="name" class="form-label">Prénom*</label>
+      <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label for="surname" class="form-label">Nom*</label>
+      <input type="text" class="form-control" id="surname" name="surname" required>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label for="email" class="form-label">Email*</label>
+      <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label for="phone" class="form-label">Téléphone*</label>
+      <input type="tel" class="form-control" id="phone" name="phone" required>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label for="city" class="form-label">Ville</label>
+      <input type="text" class="form-control" id="city" name="city">
+    </div>
+    <div class="col-md-6 mb-3">
+      <label for="postal_code" class="form-label">Code postal</label>
+      <input type="text" class="form-control" id="postal_code" name="postal_code">
+    </div>
+  </div>
+  <div class="mb-3">
+    <label for="project_stage" class="form-label">Stade d’avancement du projet</label>
+    <input type="text" class="form-control" id="project_stage" name="project_stage">
+  </div>
+  <div class="mb-3">
+    <label for="sector" class="form-label">Secteur d’activité</label>
+    <input type="text" class="form-control" id="sector" name="sector">
+  </div>
+  <div class="mb-3">
+    <label for="needs" class="form-label">Besoins / Questions</label>
+    <textarea class="form-control" id="needs" name="needs" rows="3"></textarea>
+  </div>
+  <div class="mb-3 form-check">
+    <input type="checkbox" class="form-check-input" id="consent" required>
+    <label class="form-check-label" for="consent">J’accepte que mes données soient utilisées pour la prise de rendez‑vous (voir mentions légales).</label>
+  </div>
+  <button type="submit" class="btn btn-success">Envoyer</button>
+  <a href="{{ url_for('select_agency', agency_id=slot.agency_id) }}" class="btn btn-secondary">Annuler</a>
+</form>
+{% endblock %}

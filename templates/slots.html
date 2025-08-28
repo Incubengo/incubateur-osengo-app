@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ agency.name }} – Créneaux disponibles{% endblock %}
+{% block content %}
+<h2>Créneaux disponibles pour {{ agency.name }}</h2>
+{% if slots %}
+  <table class="table table-striped">
+    <thead><tr><th>Date et heure</th><th>Action</th></tr></thead>
+    <tbody>
+    {% for slot in slots %}
+      <tr>
+        <td>{{ slot.start.strftime('%d/%m/%Y à %H:%M') }} – {{ slot.end.strftime('%H:%M') }}</td>
+        <td><a href="{{ url_for('book', slot_id=slot.id) }}" class="btn btn-sm btn-success">Réserver</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>Aucun créneau disponible pour le moment. Merci de revenir plus tard ou de contacter directement l’agence.</p>
+{% endif %}
+<p><a href="{{ url_for('index') }}">&laquo; Retour à l’accueil</a></p>
+{% endblock %}

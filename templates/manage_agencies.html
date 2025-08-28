@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Gestion des agences{% endblock %}
+{% block content %}
+<h2>Agences</h2>
+<p>Créer une nouvelle agence :</p>
+<form method="post" class="mb-4">
+  <div class="row">
+    <div class="col-md-4 mb-2">
+      <input type="text" name="name" class="form-control" placeholder="Nom de l’agence" required>
+    </div>
+    <div class="col-md-4 mb-2">
+      <input type="text" name="city" class="form-control" placeholder="Ville">
+    </div>
+    <div class="col-md-4 mb-2">
+      <input type="text" name="description" class="form-control" placeholder="Description">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Ajouter</button>
+</form>
+
+{% if agencies %}
+  <table class="table table-striped">
+    <thead><tr><th>Nom</th><th>Ville</th><th>Description</th><th>Action</th></tr></thead>
+    <tbody>
+    {% for agency in agencies %}
+      <tr>
+        <td>{{ agency.name }}</td>
+        <td>{{ agency.city }}</td>
+        <td>{{ agency.description }}</td>
+        <td>
+          <form method="post" action="{{ url_for('delete_agency', agency_id=agency.id) }}" onsubmit="return confirm('Supprimer cette agence ?')">
+            <button class="btn btn-sm btn-danger" type="submit">Supprimer</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>Aucune agence.</p>
+{% endif %}
+<p><a href="{{ url_for('dashboard') }}">Retour au tableau de bord</a></p>
+{% endblock %}
