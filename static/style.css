@@ -9,24 +9,27 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Primary colour (blue) inspired by Osengo’s branding */
+/* Primary colour updated to orange to reflect a new look and feel */
+/* Apply the orange tone to the main banner (bg-primary), buttons and related elements */
 .bg-primary {
-  background-color: #005EB8 !important;
+  background-color: #F39200 !important;
 }
 
-.navbar-dark .navbar-brand, .navbar-dark .navbar-nav .nav-link {
+.navbar-dark .navbar-brand,
+.navbar-dark .navbar-nav .nav-link {
   color: #ffffff;
 }
 
 /* Buttons */
 .btn-primary {
-  background-color: #005EB8;
-  border-color: #005EB8;
+  background-color: #F39200;
+  border-color: #F39200;
 }
 
 .btn-primary:hover {
-  background-color: #004a94;
-  border-color: #004a94;
+  /* Slightly darker shade of orange on hover for visual feedback */
+  background-color: #c77a00;
+  border-color: #c77a00;
 }
 
 /* Alerts */
